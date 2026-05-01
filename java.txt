@@ -1,0 +1,120 @@
+// Mobile Navigation Toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    // Toggle mobile menu
+    hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+
+    // Close mobile menu when clicking on a link
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        }
+    });
+});
+
+// Smooth Scrolling for Navigation Links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const headerOffset = 80;
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Navbar Background Change on Scroll
+window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 100) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
+// Active Navigation Link Highlighting
+window.addEventListener('scroll', function() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.getBoundingClientRect().top;
+        const sectionHeight = section.offsetHeight;
+        
+        if (sectionTop <= 150 && sectionTop + sectionHeight > 150) {
+            current = section.getAttribute('id');
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+            link.classList.add('active');
+        }
+    });
+});
+
+// Scroll Animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+        }
+    });
+}, observerOptions);
+
+// Observe all sections for animations
+document.addEventListener('DOMContentLoaded', function() {
+    const animatedElements = document.querySelectorAll('.section-title, .about-text, .experience-item, .skill-item, .contact-form');
+    animatedElements.forEach(el => {
+        observer.observe(el);
+    });
+});
+
+// Progress Bar Animation for Skills
+function animateProgressBars() {
+    const progressBars = document.querySelectorAll('.progress-fill');
+    progressBars.forEach(bar => {
+        const percentage = bar.getAttribute('data-percentage');
+        setTimeout(() => {
+            bar.style.width = percentage + '%';
+        }, 200);
+    });
+}
+
+// Trigger progress bar animation when skills section is visible
+const skillsSection = document.querySelector('#skills');
+if (skillsSection) {
+    const skillsObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateProgressBars
